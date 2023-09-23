@@ -11,3 +11,74 @@ Given a version number **MAJOR.MINOR.PATCH**, increment the:
 **MINOR** version when you add functionality in a backward compatible manner
 **PATCH** version when you make backward compatible bug fixes
 Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
+
+## Install the Terraform CLI
+The Terraform CLI installation instructions have changed due to gpg keyring changes so the original gitpod.yml needed to be modified.
+This is now added as a bash script. 
+
+### Consideration for Linux Distribution
+
+This project is built against Ubuntu. 
+Please consider checking your Linux Distribution and change accordingly to your distribution needs.
+
+[Linux Command Line](https://www.cyberciti.biz/faq/how-to-check-os-version-in-linux-command-line/)
+
+### Shebang Considerations
+
+A Shebang (pronounced Sha-bang) tells the bash script what program that will interpret the script. Example: '#! /bin/bash'
+ChatGPT recommended we use the format '#! /usr/bin/env bash'
+ - For portability with different OS distribution
+ - Will search the user's PATH for the bash executable
+[Linux Shebang](https://linuxize.com/post/bash-shebang/)
+
+### Bash Script Execution Considerations
+
+When executing the bash script we can use the `./` shorthand notation to execute the bash script.
+Example: 
+
+```sh
+./bin/install_terraform_cli
+```
+
+If we are using a script in .gitpod.yml we need to point the script to a program to interpret it.
+Example: 
+
+```sh
+source ./bin/install_terraform_cli
+```
+
+In order to make our bash scripts executable, we need to change linux permissions using chmod command.
+Example: 
+
+```sh
+chmod u+x ./bin/install_terraform_cli
+```
+
+alternatively, we can use 
+
+```sh
+chmod 744 ./bin/install_terraform_cli
+```
+
+### Refactoring into bash scripts
+
+While fixing the Terraform CLI gpg deprication issues, we noticed that the script steps were a considerable amount of code so we decided to create a bash script to install the terraform CLI.
+
+This bash script is located at: [./bin.install_terraform_cli](./bin/install_terraform_cli)
+
+- This will keep the Gitpod task file neat and tidy
+- This allows for an easier debug and execution of the terraform CLI manually later if needed
+- This will allow better portability for other projects that need to install Terraform CLI
+
+[Install Terraform CLI](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+### Gitpod workspace tasks
+
+- Since we are re-launching the existing workspace in Gitpod, we need terraform to be installed automatically using the script we created. To make sure the execution happens in an existing environment, we modify the gitpod.yml file
+- We need to be careful when using init because gitpod will not rerun if we rstart an existing workspace.
+[Gitpod workspace tasks](https://www.gitpod.io/docs/configure/workspaces/tasks)
+
+##
+
+
+
