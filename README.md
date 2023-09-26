@@ -268,3 +268,5 @@ Provide the below lines of code in the json file opened and use the code generat
 }
 ```
 
+We have automated the process of generating the tfrc credentials and placing the file within the directory using bash script.
+[bin/generate_tfrc_credentials](bin/generate_tfrc_credentials)
