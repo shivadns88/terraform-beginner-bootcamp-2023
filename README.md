@@ -193,6 +193,11 @@ We can output this changeset to be passed to an apply, but often you can just ig
 `terraform apply`
 
 This will run a plan and pass the changeset to be executed by terraform. Apply should promot yes or no.
+We can skip approving using `terraform apply --auto-approve`
+
+#### Terraform Destroy
+
+The `Terraform Destroy` command will destroy the resources which were created by running `terraform apply`
 
 #### Terraform lock files
 
@@ -213,4 +218,14 @@ If you lose this file, you lose knowing the state of your infrastructure.
 ### Terraform Directory
 
 `.terraform` directory contains binaries of terraform providers.
+
+### Creating an S3 bucket in Terraform
+- [Terraform AWS S3 bucket provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket)
+- [Terraform Random String Provider](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string)
+
+
+
+#### S3 bucket naming convention
+- S3 bucket naming convention does not allow upper case letters. [AWS S3 bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html)
+- For this, we will need to modify the way random string is generated
 
