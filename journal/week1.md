@@ -124,3 +124,81 @@ module "terrahouse_aws {
   source = "./modules/terrahouse_aws"
 }
 ```
+
+## Considerations when using ChatGPT to write Terraform Code
+
+LLMs such as ChatGPT may not be trained on the latest documentation or information about Terraform so it may likely produce older example that could be deprecated, often affecting terraform providers.
+
+## Working with Files in Terraform
+
+### File and File Exists Functions
+
+- variable "index_html_filepath" is declared with a type of string and a description to provide information about the variable.
+- The validation block is used to enforce the condition that checks if the specified index_html_filepath exists and is a valid file path.
+- file(var.index_html_filepath) checks if the file at the path specified by the variable exists.
+- fileexists(var.index_html_filepath) verifies that the path specified by the variable is a valid file path.
+
+Code for the variable index.html file path and to validate the variable:
+
+```tf
+variable "index_html_filepath" {
+  type        = string
+  description = "Path to the index.html file"
+
+  validation {
+    condition     = can(file(var.index_html_filepath)) && can(fileexists(var.index_html_filepath))
+    error_message = "The specified index_html_filepath does not exist or is not a valid file path."
+  }
+}
+```
+Code for error.html file path and to validate the variable:
+
+```tf
+variable "error_html_filepath" {
+  type        = string
+  description = "Path to the error.html file"
+
+  validation {
+    condition     = can(file(var.error_html_filepath)) && can(fileexists(var.error_html_filepath))
+    error_message = "The specified index_html_filepath does not exist or is not a valid file path."
+  }
+}
+```
+
+### Path Variable
+In Terraform, there is a special variable called `path` that allows us to reference local paths:
+
+- path.module = get the path for the current module
+- path.root = get the path for the root module
+
+[Special Path Variable](https://developer.hashicorp.com/terraform/language/expressions/references)
+
+Code for index.html s3 Object which references source path using the variable index_html_filepath defined previously
+
+```tf
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.s3_bucket.bucket
+  key    = "index.html"
+  source = var.index_html_filepath
+  etag = filemd5(var.index_html_filepath)
+}
+```
+
+Code for error.html s3 Object which references source path using the variable error_html_filepath defined previously
+
+```tf
+resource "aws_s3_object" "error_html" {
+  bucket = aws_s3_bucket.s3_bucket.bucket
+  key    = "error.html"
+  source = var.error_html_filepath
+  etag = filemd5(var.error_html_filepath)
+}
+```
+
+### Filemd5 function
+
+[Filemd5 Function](https://developer.hashicorp.com/terraform/language/functions/filemd5)
+
+filemd5 is a variant of `md5` that hashes the contents of a given file rather than a literal string.
+This is similar to `md5(file(filename))`, but because file accepts only UTF-8 text it cannot be used to create hashes for binary files.
+
