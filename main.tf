@@ -1,17 +1,19 @@
-# resource "random_string" "bucket_name" {
-#   length           = 32
-#   special          = false
-#   lower = true
-#   upper = false
-# }
+terraform {
 
-resource "aws_s3_bucket" "s3_bucket" {
-  bucket = var.bucket_name
+#Following lines of code will be used to migrate the terraform state to terraform cloud
+#   cloud {
+#     organization = "shivadns88_tech"
 
-  tags = {
-    User_Uuid        = var.user_uuid
-  }
+#     workspaces {
+#       name = "terra-house-one"
+#     }
+#   }
 
 }
 
-
+#https://developer.hashicorp.com/terraform/language/modules/sources
+module "terrahouse_aws" {
+  source = "./modules/terrahouse_aws"
+  user_uuid = var.user_uuid
+  bucket_name = var.bucket_name
+}
