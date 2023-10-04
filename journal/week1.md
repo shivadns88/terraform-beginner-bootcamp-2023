@@ -202,3 +202,31 @@ resource "aws_s3_object" "error_html" {
 filemd5 is a variant of `md5` that hashes the contents of a given file rather than a literal string.
 This is similar to `md5(file(filename))`, but because file accepts only UTF-8 text it cannot be used to create hashes for binary files.
 
+### Terraform Locals
+[Terraform Locals](https://developer.hashicorp.com/terraform/language/values/locals)
+This allows us to source data from cloud resources
+
+```tf
+locals {
+  # Ids for multiple sets of EC2 instances, merged together
+  instance_ids = concat(aws_instance.blue.*.id, aws_instance.green.*.id)
+}
+```
+
+### Terraform Data Sources
+
+[Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
+[Caller Identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)
+
+A data source is accessed via a special kind of resource known as a data resource, declared using a data block:
+
+### Working with JSON in Terraform using jsonencode
+
+[JSONEncode](https://developer.hashicorp.com/terraform/language/functions/jsonencode)
+The JSON encoding maps Terraform language values to JSON values.
+Example: 
+
+```tf
+> jsonencode({"hello"="world"})
+{"hello":"world"}
+```
