@@ -230,3 +230,54 @@ Example:
 > jsonencode({"hello"="world"})
 {"hello":"world"}
 ```
+
+### Changing lifecycles of Resources
+[Meta Arguments Lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+
+The Resource Behavior page describes the general lifecycle for resources. Some details of that behavior can be customized using the special nested lifecycle block within a resource block body:
+
+```tf
+resource "aws_s3_object" "s3_bucket" {
+  # ...
+  lifecycle {
+    ignore_changes = [etag]
+      # Ignore changes to tags
+  }
+}
+```
+
+### Terraform Data
+[Terraform Data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
+
+Plain data values such as Local Values and Input Variables don't have any side-effects to plan against and so they aren't valid in replace_triggered_by. 
+
+You can use terraform_data's behavior of planning an action each time input changes to indirectly use a plain value to trigger replacement.
+
+```tf
+#declare the variable content_version
+variable "content_version" {
+  type        = number
+  description = "The content version (positive integer starting at 1)"
+}
+
+#Create the resource content_version which gets input from the variable defined above
+resource "terraform_data" "content_version" {
+  input = var.content_version
+} 
+
+#reference/use content_version for terraform_data as shown below
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.s3_bucket.bucket
+  key    = "index.html"
+  source = var.index_html_filepath
+  content_type = "text/html"
+
+  etag = filemd5(var.index_html_filepath)
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.content_version.output]
+    ignore_changes = [etag]
+      # Ignore changes to etags
+  }
+}
+```
