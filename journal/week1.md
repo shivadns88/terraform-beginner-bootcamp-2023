@@ -1,4 +1,4 @@
-# Terraform Beginner Bootcamp 2023 - Week 0
+# Terraform Beginner Bootcamp 2023 - Week 1
 
 ## Table of Content
 
@@ -307,3 +307,43 @@ resource "aws_instance" "web" {
 
 This will execute commands on a machine which you target. You will need to provide credentials.
 
+### For Each in Terraform
+[For Each in Terraform](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
+
+The for_each meta-argument accepts a map or a set of strings, and creates an instance for each item in that map or set. 
+
+Each instance has a distinct infrastructure object associated with it, and each is separately created, updated, or destroyed when the configuration is applied.
+
+```tf
+resource "aws_s3_object" "upload_assets" {
+  for_each = fileset("${path.root}/public/assets", "*.{jpg,png,gif}")
+  bucket = aws_s3_bucket.s3_bucket.bucket
+  key    = "assets/${each.key}"
+  source = "${path.root}/public/assets/${each.key}"
+  etag = filemd5("${path.root}/public/assets/${each.key}")
+  lifecycle {
+    replace_triggered_by = [terraform_data.content_version.output]
+    ignore_changes = [etag]
+      # Ignore changes to etags
+  }
+}
+```
+
+### Fileset 
+
+fileset enumerates a set of regular file names given a path and pattern. 
+
+The path is automatically removed from the resulting set of file names and any result still containing path separators always returns forward slash (/) as the path separator for cross-system compatibility.
+
+Example:
+
+```tf
+$terraform console
+
+> fileset("${path.root}/public/assets", "*.{jpg,png,gif}")
+toset([
+  "TerraDome.png",
+  "Terracastle.png",
+])
+
+```
