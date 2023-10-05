@@ -281,3 +281,29 @@ resource "aws_s3_object" "index_html" {
   }
 }
 ```
+### Terraform Provisioners
+[Terraform Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
+
+Provisioners allow you to execute commands on compute instances and other resources.
+For example, you can use AWS CLI commands.
+
+These are not recommended for use by Hashicorp and it is recommended to use Config Mgmt tools such as Ansible, Chef for such use case.
+
+#### Local Exec
+
+This will execute command on the machine running terraform commands 
+
+```tf
+resource "aws_instance" "web" {
+  # ...
+
+  provisioner "local-exec" {
+    command = "echo The server's IP address is ${self.private_ip}"
+  }
+}
+```
+
+#### Remote Exec
+
+This will execute commands on a machine which you target. You will need to provide credentials.
+
