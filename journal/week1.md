@@ -347,3 +347,44 @@ toset([
 ])
 
 ```
+
+## Terraform - Secret Management Challenges
+
+### Sensitive Data Source - Secure State Files
+
+Following are security sensitive details in Terraform:
+
+- Hard Coded Secrets in File
+- State Files Information
+- Variable Files
+- Provider/Environment Variables
+
+### Sensitive Data - Access to Sensitive Data in Terraform Cloud
+
+- Run can be managed by specific users in cloud
+
+### Secret Management using Cloud Native or Other Services
+
+Following can be used for secret management
+
+- AWS Secret Manager
+- Azure Key Vault
+- Google Secret Manager
+- Hashicorp Vault
+
+### User Access to Secrets
+
+- Running can be managed by specific users in cloud
+- Enable Granular access management
+
+### Secret Management - Variables in Terraform Cloud
+
+Variables in Terraform Cloud can be either
+
+- HCL Variable
+- Env Variable
+  - Secrets - example: AWS Access Keys, Secret, etc.
+
+#### Outputs in Terraform can also be sensitive
+This is managed by adding a property `sensitive = "true"`
+
