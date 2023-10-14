@@ -123,6 +123,7 @@ func Resource() *schema.Resource {
 			},
 
 		},
+
 	}
 	log.Print("Resource:start")
 	return resource
@@ -183,6 +184,7 @@ func resourceHouseCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	d.SetId(homeUUID)
 
 	log.Print("resourceHouseCreate:end")
+
 
 	return diags
 }
