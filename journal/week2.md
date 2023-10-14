@@ -49,3 +49,7 @@ We can run the web server by executing the following commands:
 bundle install
 bundle exec ruby server.rb
 ```
+### CRUD
+
+[CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)
+CRUD stands for Create, read, update and delete.
