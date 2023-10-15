@@ -2,6 +2,46 @@
 
 ## Table of Content
 
+- [Root Module Structure](#root-module-structure)
+  - [Terraform Cloud Variables](#terraform-cloud-variables)
+  - [Var Flag](#var-flag)
+  - [Setting Variables using Var Definitions](#setting-variables-by-var-definitions)
+  - [Terraform tfvars file](#terraform-tfvars-file)
+  - [Auto TFVars Files](#auto-tfvars-files)
+  - [Order of Terraform Variables](#order-of-terraform-variables)
+  - [Restructure Root Module](#restructure-root-module)
+- [Dealing with Configuration Drift](#dealing-with-configuration-drift)
+- [What if we lose state file](#what-if-we-lose-state-file)
+- [Fixing Code in Terraform](#fixing-code-in-terraform)
+  - [Fix Missing Resources with Terraform import](#fix-missing-resources-with-terraform-import)
+  - [Fix Manual Configuration](#fix-manual-configuration)
+  - [Fix using Terraform Refresh](#fix-using-terraform-refresh)
+- [Terraform Modules](#terraform-modules)
+  - [Passing Input Variables](#passing-input-variables)
+  - [Module Sources](#module-sources)
+- [Considerations when using ChatGPT to write Terraform Code](#considerations-when-using-chatgpt-to-write-terraform-code)
+- [Working with Files in Terraform](#working-with-files-in-terraform)
+  - [File and File Exists Functions](#file-and-file-exists-functions)
+  - [Path Variable](#path-variable)
+  - [Filemd5 function](#filemd5-function)
+- [Terraform Locals](#terraform-locals)
+- [Terraform Data Sources](#terraform-data-sources)
+  - [Working with JSON in Terraform using jsonencode](#working-with-json-in-terraform-using-jsonencode)
+  - [Changing lifecycles of Resources](#changing-lifecycles-of-resources)
+- [Terraform Data](#terraform-data)
+- [Terraform Provisioners](#terraform-provisioners)
+  - [Local Exec](#local-exec)
+  - [Remote Exec](#remote-exec)
+  - [For Each in Terraform](#for-each-in-terraform)
+  - [Fileset](#fileset)
+- [Terraform - Secret Management Challenges](#terraform---secret-management-challenges)
+  - [Sensitive Data Source - Secure State Files](#sensitive-data-source---secure-state-files)
+  - [Sensitive Data - Access to Sensitive Data in Terraform Cloud](#sensitive-data---access-to-sensitive-data-in-terraform-cloud)
+  - [Secret Management using Cloud Native or Other Services](#secret-management-using-cloud-native-or-other-services)
+  - [User Access to Secrets](#user-access-to-secrets)
+  - [Secret Management - Variables in Terraform Cloud](#secret-management---variables-in-terraform-cloud)
+    - [Outputs in Terraform can also be sensitive](#outputs-in-terraform-can-also-be-sensitive)
+
 ## Root Module Structure
 
 Our root module structure will have the following components:
@@ -31,18 +71,18 @@ We can set Terraform Cloud Variables to be sensitive so they are not shown visib
 We can use the `-var` flag to set an input variables or override a variable in the tfvars file.
 Example: `terraform -var user_uuid="my-user-uuid"`
 
-### 
+### Setting variables by var definitions
 To set lots of variables, it is more convenient to specify their values in a variable definitions file (with a filename ending in either .tfvars or .tfvars.json) and then specify that file on the command line with -var-file:
 
 ```terraform
 terraform apply -var-file="testing.tfvars"
 ```
 
-### terraform.tfvars
+### terraform tfvars file
 
 This is the default file to load in terraform variables
 
-### auto.tfvars
+### auto tfvars files
 Terraform also automatically loads a number of variable definitions files if they are present:
 - Files named exactly terraform.tfvars or terraform.tfvars.json.
 - Any files with names ending in .auto.tfvars or .auto.tfvars.json.
@@ -76,6 +116,13 @@ Terraform loads variables in the following order, with later sources taking prec
 
 If the state file is lost, we most likely will have to tear down all the cloud infrastructure manually.
 We can use terraform port but it won't for all cloud resources. We need to check the terraform providers documentation for which resources support import.
+
+## Fixing Code in Terraform
+
+Sometimes, we need to perform changes to fix terraform code for various reasons
+- fixing missing resources
+- fixing manual configurations
+- fixing using terraform refresh
 
 ### Fix Missing Resources with Terraform import
 [Terraform Import](https://developer.hashicorp.com/terraform/cli/import)
@@ -130,7 +177,7 @@ module "terrahouse_aws {
 LLMs such as ChatGPT may not be trained on the latest documentation or information about Terraform so it may likely produce older example that could be deprecated, often affecting terraform providers.
 
 ## Working with Files in Terraform
-
+Various file functions can be used in terraform to handle file operations
 ### File and File Exists Functions
 
 - variable "index_html_filepath" is declared with a type of string and a description to provide information about the variable.
@@ -202,7 +249,7 @@ resource "aws_s3_object" "error_html" {
 filemd5 is a variant of `md5` that hashes the contents of a given file rather than a literal string.
 This is similar to `md5(file(filename))`, but because file accepts only UTF-8 text it cannot be used to create hashes for binary files.
 
-### Terraform Locals
+## Terraform Locals
 [Terraform Locals](https://developer.hashicorp.com/terraform/language/values/locals)
 This allows us to source data from cloud resources
 
@@ -213,7 +260,7 @@ locals {
 }
 ```
 
-### Terraform Data Sources
+## Terraform Data Sources
 
 [Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
 [Caller Identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)
@@ -246,7 +293,7 @@ resource "aws_s3_object" "s3_bucket" {
 }
 ```
 
-### Terraform Data
+## Terraform Data
 [Terraform Data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
 
 Plain data values such as Local Values and Input Variables don't have any side-effects to plan against and so they aren't valid in replace_triggered_by. 
@@ -281,7 +328,7 @@ resource "aws_s3_object" "index_html" {
   }
 }
 ```
-### Terraform Provisioners
+## Terraform Provisioners
 [Terraform Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 
 Provisioners allow you to execute commands on compute instances and other resources.
@@ -289,7 +336,7 @@ For example, you can use AWS CLI commands.
 
 These are not recommended for use by Hashicorp and it is recommended to use Config Mgmt tools such as Ansible, Chef for such use case.
 
-#### Local Exec
+### Local Exec
 
 This will execute command on the machine running terraform commands 
 
@@ -303,7 +350,7 @@ resource "aws_instance" "web" {
 }
 ```
 
-#### Remote Exec
+### Remote Exec
 
 This will execute commands on a machine which you target. You will need to provide credentials.
 
