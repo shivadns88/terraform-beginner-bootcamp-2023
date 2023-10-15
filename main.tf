@@ -59,11 +59,12 @@ module "home_mobile_hosting" {
 resource "terratowns_home" "home_mobile" {
   name = "shivaDNS building a mobile home online!!!"
   description = <<DESCRIPTION
-Mobile homes are great, especially in a country where you cannot afford to buy a house.
-I can convert a big van into a mobile home!
-I am still broke, so building a mobile home online.
+Mobile homes are great for travel and living anywhere!
+I can convert a big vans into a mobile home!
+I cannot build one in real life so building a mobile home online :-)
+Check these mobile homes!
 DESCRIPTION
   domain_name = module.home_mobile_hosting.domain_name
-  town = "missingo"
+  town = "the-nomad-pad"
   content_version = var.mobilehome.content_version
 }
