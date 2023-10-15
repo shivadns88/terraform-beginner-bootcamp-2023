@@ -18,25 +18,20 @@ variable "user_uuid" {
 #   }
 # }
 
-variable "index_html_filepath" {
+variable "public_path" {
   type        = string
-  description = "Path to the index.html file"
-
-  validation {
-    condition     = can(file(var.index_html_filepath)) && can(fileexists(var.index_html_filepath))
-    error_message = "The specified index_html_filepath does not exist or is not a valid file path."
-  }
+  description = "Path to the public directory"
 }
 
-variable "error_html_filepath" {
-  type        = string
-  description = "Path to the error.html file"
+# variable "error_html_filepath" {
+#   type        = string
+#   description = "Path to the error.html file"
 
-  validation {
-    condition     = can(file(var.error_html_filepath)) && can(fileexists(var.error_html_filepath))
-    error_message = "The specified index_html_filepath does not exist or is not a valid file path."
-  }
-}
+#   validation {
+#     condition     = can(file(var.error_html_filepath)) && can(fileexists(var.error_html_filepath))
+#     error_message = "The specified index_html_filepath does not exist or is not a valid file path."
+#   }
+# }
 
 variable "content_version" {
   type        = number
@@ -48,7 +43,7 @@ variable "content_version" {
 }
 }
 
-variable "assets_path" {
-  description = "Path to assets folder"
-  type = string
-}
+# variable "assets_path" {
+#   description = "Path to assets folder"
+#   type = string
+# }

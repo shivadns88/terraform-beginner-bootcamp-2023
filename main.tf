@@ -6,14 +6,14 @@ terraform {
     }
   }
 
-#Following lines of code will be used to migrate the terraform state to terraform cloud
-#   cloud {
-#     organization = "shivadns88_tech"
+# Following lines of code will be used to migrate the terraform state to terraform cloud
+  cloud {
+    organization = "shivadns88_tech"
 
-#     workspaces {
-#       name = "terra-house-one"
-#     }
-#   }
+    workspaces {
+      name = "terra-house-one"
+    }
+  }
 
 }
 
@@ -24,23 +24,46 @@ provider "terratowns" {
 }
 
 #https://developer.hashicorp.com/terraform/language/modules/sources
-module "terrahouse_aws" {
-  source = "./modules/terrahouse_aws"
+# below code is for the dreamhome terrahome module
+module "home_dream_hosting" {
+  source = "./modules/terrahome_aws"
   user_uuid = var.teacherseat_user_uuid
-  index_html_filepath = var.index_html_filepath
-  error_html_filepath = var.error_html_filepath
-  content_version = var.content_version
-  assets_path = var.assets_path
+  public_path = var.dreamhome.public_path
+  content_version = var.dreamhome.content_version
 }
 
-resource "terratowns_home" "home" {
+# below is for the dreamhome terrahome resource
+resource "terratowns_home" "home_dream" {
   name = "shivaDNS building a home online!!!"
   description = <<DESCRIPTION
 Building a home in Canada is not easy.
 It is crazy expensive!
 I am broke, so building a home online.
 DESCRIPTION
-  domain_name = module.terrahouse_aws.cloudfront_url
+  domain_name = module.home_dream_hosting.domain_name
   town = "missingo"
-  content_version = 1
+  content_version = var.dreamhome.content_version
+}
+
+
+# below is the code for the mobilehome terrahome module
+module "home_mobile_hosting" {
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.mobilehome.public_path
+  content_version = var.mobilehome.content_version
+}
+
+# below is the code for the mobilehome terrahome resource
+
+resource "terratowns_home" "home_mobile" {
+  name = "shivaDNS building a mobile home online!!!"
+  description = <<DESCRIPTION
+Mobile homes are great, especially in a country where you cannot afford to buy a house.
+I can convert a big van into a mobile home!
+I am still broke, so building a mobile home online.
+DESCRIPTION
+  domain_name = module.home_mobile_hosting.domain_name
+  town = "missingo"
+  content_version = var.mobilehome.content_version
 }
